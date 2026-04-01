@@ -1,0 +1,60 @@
+# ── Completion (compinstall) ───────────────────────────────────────────────────
+zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' \
+    'm:{[:lower:]}={[:upper:]} m:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+    'm:{[:lower:]}={[:upper:]} m:{[:lower:][:upper:]}={[:upper:][:lower:]} r:|[._-]=* r:|=*' \
+    'm:{[:lower:]}={[:upper:]} m:{[:lower:][:upper:]}={[:upper:][:lower:]} l:|=* r:|=*'
+zstyle :compinstall filename '/home/$USER/.zshrc'
+autoload -Uz compinit
+compinit
+
+# ── History ────────────────────────────────────────────────────────────────────
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+
+# ── Shell options ──────────────────────────────────────────────────────────────
+setopt autocd extendedglob nomatch notify
+unsetopt beep
+bindkey -e
+
+# ── Prompt (bxrd_prompt binary) ───────────────────────────────────────────────
+autoload -U colors && colors
+setopt PROMPT_SUBST
+VIRTUAL_ENV_DISABLE_PROMPT=1
+zmodload zsh/datetime
+
+_cmd_start=0
+_last_exit=0
+
+preexec() {
+    _cmd_start=$EPOCHREALTIME
+}
+
+precmd() {
+    _last_exit=$?
+    local elapsed=0
+    if [[ $_cmd_start -gt 0 ]]; then
+        elapsed=$(printf "%.3f" $(( EPOCHREALTIME - _cmd_start )))
+        _cmd_start=0
+    fi
+    PROMPT="$(bxrd_prompt left $_last_exit $elapsed "${VIRTUAL_ENV:-}" "%~") "
+    RPROMPT="$(bxrd_prompt right $_last_exit $elapsed)"
+}
+
+export PS2='> '
+
+# ── Environment ────────────────────────────────────────────────────────────────
+export SHELL=/usr/bin/zsh
+export PATH="$PATH:/home/$USER/.local/bin"
+
+# ── Plugins ────────────────────────────────────────────────────────────────────
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# ── Aliases ────────────────────────────────────────────────────────────────────
+alias l='ls -CF --color=auto'
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
