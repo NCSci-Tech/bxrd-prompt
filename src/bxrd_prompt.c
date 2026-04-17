@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ── ANSI escape sequences ────────────────────────────────────────────────── */
+/* ANSI escape sequences */
 /* %{ %} tell zsh these bytes are zero-width (don't count toward line length). */
 /* We use fputs() for all static strings so gcc never sees %{ as a printf      */
 /* format specifier.                                                            */
@@ -32,7 +32,7 @@
 #define ESC_FG_TC(r,g,b) "%{\033[38;2;" r ";" g ";" b "m%}"
 #define ESC_RESET        "%{\033[0m%}"
 
-/* ── Palette ──────────────────────────────────────────────────────────────── */
+/* Palette */
 #define C_VENV_BG    ESC_BG256("52")
 #define C_VENV_SEPFG ESC_FG256("52")
 #define C_DIR_BG     ESC_BG_TC("20","50","20")
@@ -43,14 +43,14 @@
 #define C_GREY       ESC_FG256("244")
 #define C_RESET      ESC_RESET
 
-/* ── Nerd Font glyphs (UTF-8) ─────────────────────────────────────────────── */
+/* Nerd Font glyphs (UTF-8) */
 #define G_SEP    "\xee\x82\xb0"   /* U+E0B0  solid powerline arrow  */
 #define G_FOLDER "\xef\x81\xbb"   /* U+F007B nerd font folder       */
 #define G_OK     "\xe2\x9c\x94"   /* U+2714  ✔                      */
 #define G_FAIL   "\xe2\x9c\x98"   /* U+2718  ✘                      */
 #define G_ARROW  "\xe2\x9d\xaf"   /* U+276F  ❯                      */
 
-/* ── Safe basename — no malloc, no libc basename ─────────────────────────── */
+/* Safe basename — no malloc, no libc basename */
 static const char *safe_basename(const char *path)
 {
     if (!path || path[0] == '\0') return path;
@@ -61,7 +61,7 @@ static const char *safe_basename(const char *path)
     return base;
 }
 
-/* ── Segment printers ─────────────────────────────────────────────────────── */
+/* Segment printers */
 
 static void print_venv(const char *venv_path)
 {
@@ -85,7 +85,7 @@ static void print_arrow(void)
     fputs(" " C_WHITE G_ARROW C_RESET " ", stdout);
 }
 
-/* ── Left / Right ─────────────────────────────────────────────────────────── */
+/* Left / Right */
 
 static void prompt_left(const char *venv, const char *cwd)
 {
@@ -109,7 +109,7 @@ static void prompt_right(int exit_code, double elapsed)
         fputs(C_RED G_FAIL C_RESET, stdout);
 }
 
-/* ── Entry point ──────────────────────────────────────────────────────────── */
+/* Entry point */
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
